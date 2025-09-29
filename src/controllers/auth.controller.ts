@@ -30,3 +30,12 @@ const user = (req as any).user;
 if (!user) return res.status(401).json({ message: "Unauthorized" });
 res.json({ id: user._id, email: user.email, name: user.name, role: user.role });
 };
+
+export const logout = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  return res.json({ message: "Logged out successfully" });
+};

@@ -42,7 +42,7 @@ app.use("/api/projects", projectRoutes);
 // Health check
 app.get("/ping", (req, res) => res.json({ ok: true, ts: Date.now() }));
 app.get('/', (_req, res) => {
-  res.json({'message': 'API is running 🚀'});
+  res.json({'message': 'Portfolio APIs is running 🚀'});
 });
 
 // Error handler

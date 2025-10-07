@@ -8,7 +8,7 @@ It provides **RESTful APIs** for public content and owner-only operations (blogs
 ## Base URL
 
 - **Local Development:** `http://localhost:5000/api`
-- **Production:** `https://yourdomain.com/api` (replace with your deployed URL)
+- **Production:** `https://nextjs-portfolio-backend-three.vercel.app` (replace with your deployed URL)
 
 ---
 

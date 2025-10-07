@@ -33,7 +33,7 @@ app.use("/api/projects", project_routes_1.default);
 // Health check
 app.get("/ping", (req, res) => res.json({ ok: true, ts: Date.now() }));
 app.get('/', (_req, res) => {
-    res.json({ 'message': 'API is running 🚀' });
+    res.json({ 'message': 'Portfolio APIs is running 🚀' });
 });
 // Error handler
 app.use(error_middleware_1.errorHandler);

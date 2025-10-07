@@ -3,16 +3,18 @@ import sanitizeHtml from "sanitize-html";
 import { Blog } from "../models/blog.model";
 
 export const listPublic = async (req: Request, res: Response) => {
-  const page = parseInt((req.query.page as string) || "1");
-  const limit = parseInt((req.query.limit as string) || "10");
-  const skip = (page - 1) * limit;
-  const docs = await Blog.find({ published: true || null })
-    .sort({ publishedAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .select("title slug excerpt coverImage tags publishedAt");
-  res.json(docs);
+  try {
+    const docs = await Blog.find()
+      .sort({ publishedAt: -1 }) // optional, remove if not needed
+      .select("title slug excerpt coverImage tags publishedAt");
+
+    res.json(docs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
+
 
 
 

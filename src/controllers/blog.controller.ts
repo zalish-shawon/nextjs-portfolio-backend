@@ -6,13 +6,15 @@ export const listPublic = async (req: Request, res: Response) => {
   const page = parseInt((req.query.page as string) || "1");
   const limit = parseInt((req.query.limit as string) || "10");
   const skip = (page - 1) * limit;
-  const docs = await Blog.find({ published: true })
+  const docs = await Blog.find({ published: true || null })
     .sort({ publishedAt: -1 })
     .skip(skip)
     .limit(limit)
     .select("title slug excerpt coverImage tags publishedAt");
   res.json(docs);
 };
+
+
 
 export const getBySlug = async (req: Request, res: Response) => {
   const slug = req.params.slug;

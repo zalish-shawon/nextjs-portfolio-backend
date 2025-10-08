@@ -10,6 +10,7 @@ import authRoutes from "./routes/auth.routes";
 import blogRoutes from "./routes/blog.routes";
 import projectRoutes from "./routes/project.routes";
 import { errorHandler } from "./middlewares/error.middleware";
+import aboutRoutes from "./routes/about.routes";
 
 
 dotenv.config();
@@ -37,6 +38,8 @@ app.use(limiter);
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/about", aboutRoutes);
+
 
 
 // Health check

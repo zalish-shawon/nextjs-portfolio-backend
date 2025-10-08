@@ -17,10 +17,18 @@ const login = async (req, res) => {
     const ok = await bcrypt_1.default.compare(password, user.password);
     if (!ok)
         return res.status(401).json({ message: "Invalid credentials" });
-    const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
     // Optionally set cookie (httpOnly)
-    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: 7 * 24 * 60 * 60 * 1000 });
-    res.json({ token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.json({
+        token,
+        user: { id: user._id, email: user.email, name: user.name, role: user.role },
+    });
 };
 exports.login = login;
 const me = async (req, res) => {
@@ -28,7 +36,12 @@ const me = async (req, res) => {
     const user = req.user;
     if (!user)
         return res.status(401).json({ message: "Unauthorized" });
-    res.json({ id: user._id, email: user.email, name: user.name, role: user.role });
+    res.json({
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+    });
 };
 exports.me = me;
 const logout = (req, res) => {

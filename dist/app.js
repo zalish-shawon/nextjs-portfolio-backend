@@ -14,6 +14,7 @@ const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const blog_routes_1 = __importDefault(require("./routes/blog.routes"));
 const project_routes_1 = __importDefault(require("./routes/project.routes"));
 const error_middleware_1 = require("./middlewares/error.middleware");
+const about_routes_1 = __importDefault(require("./routes/about.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Middlewares
@@ -30,6 +31,7 @@ app.use(limiter);
 app.use("/api/auth", auth_routes_1.default);
 app.use("/api/blogs", blog_routes_1.default);
 app.use("/api/projects", project_routes_1.default);
+app.use("/api/about", about_routes_1.default);
 // Health check
 app.get("/ping", (req, res) => res.json({ ok: true, ts: Date.now() }));
 app.get('/', (_req, res) => {

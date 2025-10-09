@@ -21,8 +21,9 @@ const login = async (req, res) => {
     // Optionally set cookie (httpOnly)
     res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        secure: true,
+        sameSite: "none", // none for cross-domain
+        path: "/",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     res.json({

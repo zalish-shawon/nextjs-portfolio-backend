@@ -24,7 +24,23 @@ app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 if (process.env.NODE_ENV !== "production")
     app.use((0, morgan_1.default)("dev"));
-app.use((0, cors_1.default)({ origin: process.env.FRONTEND_URL, credentials: true }));
+// app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+const allowedOrigins = [
+    "http://localhost:3000",
+    "https://nextjs-portfolio-frontend-gold.vercel.app",
+];
+app.use((0, cors_1.default)({
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true); // allow requests without origin (e.g. Postman)
+        if (allowedOrigins.includes(origin))
+            return callback(null, true);
+        return callback(new Error("CORS not allowed for this origin"), false);
+    },
+    credentials: true,
+}));
+// ✅ Handle preflight requests explicitly (important for Vercel)
+app.options("*", (0, cors_1.default)());
 const limiter = (0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use(limiter);
 // Routes

@@ -27,7 +27,27 @@ app.use(cookieParser());
 if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
 
 
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+// app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://nextjs-portfolio-frontend-gold.vercel.app",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow requests without origin (e.g. Postman)
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(new Error("CORS not allowed for this origin"), false);
+    },
+    credentials: true,
+  })
+);
+
+// ✅ Handle preflight requests explicitly (important for Vercel)
+app.options("*", cors());
+
 
 
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });

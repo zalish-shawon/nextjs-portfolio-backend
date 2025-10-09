@@ -1,55 +1,43 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { User } from "../models/user.model";
 
+// 🔹 Simple login — no JWT or cookie
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password required" });
-  const user = await User.findOne({ email });
-  if (!user) return res.status(401).json({ message: "Invalid credentials" });
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+  try {
+    const { email, password } = req.body;
 
-  const token = jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.JWT_SECRET!,
-    { expiresIn: "7d" }
-  );
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password required" });
 
-  // Optionally set cookie (httpOnly)
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none", 
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-  res.json({
-    token,
-    user: { id: user._id, email: user.email, name: user.name, role: user.role },
-  });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) return res.status(401).json({ message: "Invalid credentials" });
+
+    // ✅ Just return the user info, no token
+    return res.json({
+      message: "Login successful ✅",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
 };
 
+// 🔹 Return mock user for testing (no auth check)
 export const me = async (req: Request, res: Response) => {
-  // req.user set by auth middleware
-  const user = (req as any).user;
-  if (!user) return res.status(401).json({ message: "Unauthorized" });
-  res.json({
-    id: user._id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-  });
+  return res.json({ message: "Auth disabled for testing" });
 };
 
-export const logout = (req: Request, res: Response) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-  return res.json({ message: "Logged out successfully" });
+// 🔹 Logout (no cookie clearing since none used)
+export const logout = (_req: Request, res: Response) => {
+  return res.json({ message: "Logout successful (token disabled)" });
 };

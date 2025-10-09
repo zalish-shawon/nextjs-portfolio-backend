@@ -17,42 +17,47 @@ const error_middleware_1 = require("./middlewares/error.middleware");
 const about_routes_1 = __importDefault(require("./routes/about.routes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-// Middlewares
+// ✅ Middlewares
 app.use((0, helmet_1.default)());
 app.use(express_1.default.json({ limit: "5mb" }));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
 if (process.env.NODE_ENV !== "production")
     app.use((0, morgan_1.default)("dev"));
-// app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+// ✅ Allowed origins
 const allowedOrigins = [
-    "http://localhost:3000",
     "https://nextjs-portfolio-frontend-gold.vercel.app",
+    "http://localhost:3000",
 ];
+// ✅ CORS setup (must match frontend domain exactly)
 app.use((0, cors_1.default)({
     origin: function (origin, callback) {
         if (!origin)
-            return callback(null, true); // allow requests without origin (e.g. Postman)
+            return callback(null, true); // allow e.g. Postman
         if (allowedOrigins.includes(origin))
             return callback(null, true);
         return callback(new Error("CORS not allowed for this origin"), false);
     },
+    credentials: true, // allow sending cookies
+}));
+// ✅ Handle preflight requests properly (important for Vercel HTTPS)
+app.options("*", (0, cors_1.default)({
+    origin: allowedOrigins,
     credentials: true,
 }));
-// ✅ Handle preflight requests explicitly (important for Vercel)
-app.options("*", (0, cors_1.default)());
+// ✅ Rate limit
 const limiter = (0, express_rate_limit_1.default)({ windowMs: 15 * 60 * 1000, max: 200 });
 app.use(limiter);
-// Routes
+// ✅ Routes
 app.use("/api/auth", auth_routes_1.default);
 app.use("/api/blogs", blog_routes_1.default);
 app.use("/api/projects", project_routes_1.default);
 app.use("/api/about", about_routes_1.default);
-// Health check
+// ✅ Health check
 app.get("/ping", (req, res) => res.json({ ok: true, ts: Date.now() }));
-app.get('/', (_req, res) => {
-    res.json({ 'message': 'Portfolio APIs is running 🚀' });
+app.get("/", (_req, res) => {
+    res.json({ message: "Portfolio APIs running 🚀" });
 });
-// Error handler
+// ✅ Error handler
 app.use(error_middleware_1.errorHandler);
 exports.default = app;
